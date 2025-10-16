@@ -26,8 +26,8 @@ function loadMovies() {
             title: "Форсаж 9",
             year: "2021",
             poster: "https://images.unsplash.com/photo-1594909122845-11baa439b7bf?w=300&h=450&fit=crop",
-            rutubeEmbedUrl: "https://rutube.ru/play/embed/1234567890", // Замени на реальную embed ссылку
-            rutubePageUrl: "https://rutube.ru/video/1234567890/", // Замени на реальную страницу видео
+            rutubeEmbedUrl: "https://rutube.ru/play/embed/bb0c848e121e79263789b3b19460bff0/", // Замени на реальную embed ссылку
+            rutubePageUrl: "https://rutube.ru/video/bb0c848e121e79263789b3b19460bff0/", // Замени на реальную страницу видео
             category: "films",
             description: "Доминик Торетто ведет спокойную жизнь с Летти и своим сыном."
         },
