@@ -10,6 +10,7 @@ body {
     color: white;
     min-height: 100vh;
     padding: 20px;
+    line-height: 1.6;
 }
 
 .container {
@@ -53,6 +54,12 @@ body {
     font-size: 16px;
     outline: none;
     backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
 }
 
 .search-input::placeholder {
@@ -83,6 +90,7 @@ body {
 .category-btn:hover {
     background: #ee5a24;
     transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(238, 90, 36, 0.4);
 }
 
 .movies-grid {
@@ -113,6 +121,11 @@ body {
     height: 200px;
     object-fit: cover;
     background: #333;
+    transition: transform 0.3s ease;
+}
+
+.movie-card:hover .movie-poster {
+    transform: scale(1.05);
 }
 
 .movie-info {
@@ -141,31 +154,44 @@ body {
     color: #888;
 }
 
-/* Стили для VK Video Player */
-/* Обновленные стили для iframe плеера */
+.loading::after {
+    content: '';
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0% { content: '.'; }
+    33% { content: '..'; }
+    66% { content: '...'; }
+}
+
+/* RuTube Player Styles */
 .player-container {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: black;
+    background: #000;
     z-index: 1000;
     display: none;
     flex-direction: column;
 }
 
-.vk-video-player {
+.rutube-player {
     width: 100%;
     height: 100%;
     flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.vk-video-player iframe {
+.rutube-iframe {
     width: 100%;
     height: 100%;
     border: none;
-    background: black;
+    background: #000;
 }
 
 .back-btn {
@@ -173,21 +199,25 @@ body {
     top: 20px;
     left: 20px;
     z-index: 1001;
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.8);
     color: white;
-    border: none;
+    border: 2px solid rgba(255, 255, 255, 0.3);
     padding: 12px 18px;
-    border-radius: 8px;
+    border-radius: 10px;
     cursor: pointer;
     font-size: 16px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
 }
 
-/* Адаптация VK виджета под мобильные устройства */
-.vk-widget {
-    width: 100% !important;
-    height: 100% !important;
+.back-btn:hover {
+    background: rgba(238, 90, 36, 0.9);
+    border-color: #ee5a24;
+    transform: scale(1.05);
 }
 
+/* Mobile Responsive */
 @media (max-width: 768px) {
     .movies-grid {
         grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
@@ -198,7 +228,45 @@ body {
         height: 180px;
     }
     
+    body {
+        padding: 15px;
+    }
+    
+    .header h1 {
+        font-size: 2em;
+    }
+}
+
+@media (max-width: 480px) {
+    .movies-grid {
+        grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+        gap: 8px;
+    }
+    
+    .movie-poster {
+        height: 160px;
+    }
+    
+    .category-btn {
+        padding: 10px 15px;
+        font-size: 12px;
+    }
+    
+    .back-btn {
+        top: 10px;
+        left: 10px;
+        padding: 10px 15px;
+        font-size: 14px;
+    }
+}
+
+/* Landscape mode support */
+@media (max-height: 500px) and (orientation: landscape) {
     .player-container {
         padding: 0;
+    }
+    
+    .rutube-player {
+        height: 100vh;
     }
 }
