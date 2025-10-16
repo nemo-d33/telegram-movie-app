@@ -26,7 +26,16 @@ function loadMovies() {
             title: "Форсаж 9",
             year: "2021",
             poster: "https://images.unsplash.com/photo-1594909122845-11baa439b7bf?w=300&h=450&fit=crop",
-            videoUrl: "https://t.me/tududu33/2188/2392",
+            videoUrl: "https://t.me/movies_ssilka/2",
+            category: "films",
+            description: "Доминик Торетто ведет спокойную жизнь с Летти и своим сыном."
+        },
+        {
+            id: 1,
+            title: "Как приручить дракона",
+            year: "2010",
+            poster: "https://images.unsplash.com/photo-1594909122845-11baa439b7bf?w=300&h=450&fit=crop",
+            videoUrl: "https://t.me/movies_ssilka/2",
             category: "films",
             description: "Доминик Торетто ведет спокойную жизнь с Летти и своим сыном."
         },
