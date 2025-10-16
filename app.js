@@ -3,7 +3,6 @@ const tg = window.Telegram.WebApp;
 let movies = [];
 let filteredMovies = [];
 let currentCategory = 'all';
-let vkWidget = null;
 
 function initApp() {
     tg.ready();
@@ -17,14 +16,6 @@ function initApp() {
         hideLoading();
         renderMovies(movies);
         setupEventListeners();
-        
-        // Инициализируем VK Widgets API
-        if (window.VK) {
-            VK.init({
-                apiId: 0, // Для виджетов не требуется apiId
-                onlyWidgets: true
-            });
-        }
     }, 1000);
 }
 
@@ -35,41 +26,28 @@ function loadMovies() {
             title: "Форсаж 9",
             year: "2021",
             poster: "https://images.unsplash.com/photo-1594909122845-11baa439b7bf?w=300&h=450&fit=crop",
-            // Формат VK видео: -groupID_videoID или video-owner_id_video_id
-            vkVideoId: "-180001061_456242960", // Пример ID видео из VK
-            videoUrl: "https://vkvideo.ru/video-180001061_456242960", // Полная ссылка для резерва
+            // ИСПРАВЛЕННЫЙ ФОРМАТ ДЛЯ IFRAME
+            vkVideoUrl: "https://vk.com/video_ext.php?oid=-180001061&id=456242960&hash=abc123", // Полная iframe ссылка
             category: "films",
             description: "Доминик Торетто ведет спокойную жизнь с Летти и своим сыном."
         },
         {
             id: 2,
-            title: "Мстители: Финал",
+            title: "Мстители: Финал", 
             year: "2019",
             poster: "https://images.unsplash.com/photo-1635805737707-575885ab0820?w=300&h=450&fit=crop",
-            vkVideoId: "-180001061_456242961", // Замени на реальный ID
-            videoUrl: "https://vk.com/video-180001061_456242961",
+            vkVideoUrl: "https://vk.com/video_ext.php?oid=-180001061&id=456242961&hash=abc124",
             category: "films",
             description: "Оставшиеся в живых члены команды Мстителей пытаются исправить последствия действий Таноса."
         },
         {
             id: 3,
             title: "Игра в кальмара",
-            year: "2021",
+            year: "2021", 
             poster: "https://images.unsplash.com/photo-1560169897-fc0cdbdfa4d5?w=300&h=450&fit=crop",
-            vkVideoId: "-180001061_456242962", // Замени на реальный ID
-            videoUrl: "https://vk.com/video-180001061_456242962",
+            vkVideoUrl: "https://vk.com/video_ext.php?oid=-180001061&id=456242962&hash=abc125",
             category: "series",
             description: "Сотни игроков-банкротов принимают приглашение сыграть в детские игры на выживание."
-        },
-        {
-            id: 4,
-            title: "Холодное сердце",
-            year: "2013",
-            poster: "https://images.unsplash.com/photo-1618336756473-37d8fcf7d7be?w=300&h=450&fit=crop",
-            vkVideoId: "-180001061_456242963", // Замени на реальный ID
-            videoUrl: "https://vk.com/video-180001061_456242963",
-            category: "cartoons",
-            description: "Бесстрашная Анна отправляется в горы, чтобы найти свою сестру Эльзу."
         }
     ];
     
@@ -113,37 +91,29 @@ function openMovie(movieId) {
         ]
     }, function(buttonId) {
         if (buttonId === 'watch') {
-            playVKVideo(movie.vkVideoId, movie.videoUrl, movie.title);
+            playVKVideo(movie.vkVideoUrl, movie.title);
         }
     });
 }
 
-function playVKVideo(vkVideoId, videoUrl, title) {
+function playVKVideo(videoUrl, title) {
     const playerContainer = document.getElementById('playerContainer');
     const videoPlayerContainer = document.getElementById('vkVideoPlayer');
     
-    // Очищаем предыдущий плеер
-    videoPlayerContainer.innerHTML = '';
+    console.log('Opening video:', videoUrl); // Для отладки
     
-    // Создаем VK Video Widget
-    if (window.VK && VK.Widgets) {
-        vkWidget = VK.Widgets.Player(
-            "vkVideoPlayer", 
-            vkVideoId, 
-            {
-                width: '100%',
-                height: '100%',
-                auto_play: 1
-            },
-            function(player) {
-                console.log('VK Player loaded');
-            }
-        );
-    } else {
-        // Fallback: открываем в новой вкладке если VK Widgets не загрузились
-        window.open(videoUrl, '_blank');
-        return;
-    }
+    // Создаем iframe с VK видеоплеером
+    videoPlayerContainer.innerHTML = `
+        <iframe 
+            src="${videoUrl}" 
+            width="100%" 
+            height="100%" 
+            frameborder="0" 
+            allowfullscreen 
+            allow="autoplay; encrypted-media"
+            style="border: none;"
+        ></iframe>
+    `;
     
     playerContainer.style.display = 'flex';
     document.body.style.overflow = 'hidden';
@@ -153,16 +123,8 @@ function closePlayer() {
     const playerContainer = document.getElementById('playerContainer');
     const videoPlayerContainer = document.getElementById('vkVideoPlayer');
     
-    // Останавливаем VK плеер если он существует
-    if (vkWidget) {
-        try {
-            // VK Widgets API не имеет прямого метода destroy, поэтому просто очищаем контейнер
-            videoPlayerContainer.innerHTML = '';
-        } catch (e) {
-            console.log('Error closing VK player:', e);
-        }
-        vkWidget = null;
-    }
+    // Останавливаем видео очисткой iframe
+    videoPlayerContainer.innerHTML = '';
     
     playerContainer.style.display = 'none';
     document.body.style.overflow = 'auto';
