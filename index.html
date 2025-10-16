@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎬 Мой Кинотеатр</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🎬 Мой Кинотеатр</h1>
+            <p>Смотрите фильмы в отличном качестве</p>
+        </header>
+        
+        <div class="search-box">
+            <input type="text" class="search-input" id="searchInput" placeholder="🔍 Поиск фильмов...">
+        </div>
+        
+        <div class="categories">
+            <button class="category-btn active" data-category="all">Все</button>
+            <button class="category-btn" data-category="films">Фильмы</button>
+            <button class="category-btn" data-category="series">Сериалы</button>
+            <button class="category-btn" data-category="cartoons">Мультфильмы</button>
+        </div>
+        
+        <div id="moviesList" class="movies-grid"></div>
+        <div id="loading" class="loading">Загрузка фильмов</div>
+    </div>
+    
+    <div class="player-container" id="playerContainer">
+        <button class="back-btn" onclick="closePlayer()">← Назад</button>
+        <video controls class="video-player" id="videoPlayer">
+            Ваш браузер не поддерживает видео.
+        </video>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
