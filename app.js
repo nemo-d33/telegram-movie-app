@@ -26,7 +26,7 @@ function loadMovies() {
             title: "Форсаж 9",
             year: "2021",
             poster: "https://images.unsplash.com/photo-1594909122845-11baa439b7bf?w=300&h=450&fit=crop",
-            videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+            videoUrl: "https://t.me/tududu33/2208/2228",
             category: "films",
             description: "Доминик Торетто ведет спокойную жизнь с Летти и своим сыном."
         },
