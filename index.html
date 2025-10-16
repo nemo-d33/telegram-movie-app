@@ -6,6 +6,8 @@
     <title>🎬 Мой Кинотеатр</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- Подключаем VK Widgets API -->
+    <script src="https://vk.com/js/api/openapi.js?169"></script>
 </head>
 <body>
     <div class="container">
@@ -29,11 +31,10 @@
         <div id="loading" class="loading">Загрузка фильмов</div>
     </div>
     
+    <!-- VK Video Player Container -->
     <div class="player-container" id="playerContainer">
         <button class="back-btn" onclick="closePlayer()">← Назад</button>
-        <video controls class="video-player" id="videoPlayer">
-            Ваш браузер не поддерживает видео.
-        </video>
+        <div id="vkVideoPlayer" class="vk-video-player"></div>
     </div>
 
     <script src="app.js"></script>
