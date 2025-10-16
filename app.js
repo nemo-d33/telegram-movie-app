@@ -28,7 +28,7 @@ function loadMovies() {
             poster: "https://images.unsplash.com/photo-1594909122845-11baa439b7bf?w=300&h=450&fit=crop",
             videoUrl: "https://vkvideo.ru/video-180001061_456242960",
             category: "films",
-            description: "Доминик Торетто ведет спокойную жизнь с Летти и своим сыном."
+            description: "Чмо Торетто ведет спокойную жизнь с Летти и своим сыном."
         },
         {
             id: 1,
