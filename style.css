@@ -142,6 +142,7 @@ body {
 }
 
 /* Стили для VK Video Player */
+/* Обновленные стили для iframe плеера */
 .player-container {
     position: fixed;
     top: 0;
@@ -164,6 +165,7 @@ body {
     width: 100%;
     height: 100%;
     border: none;
+    background: black;
 }
 
 .back-btn {
