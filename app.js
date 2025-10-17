@@ -5,18 +5,20 @@ let filteredMovies = [];
 let currentCategory = 'all';
 
 function initApp() {
+    console.log('Initializing app...');
     tg.ready();
     tg.expand();
     
     showLoading();
     
-    // Минимальная задержка для демонстрации
+    // Минимальная задержка для инициализации
     setTimeout(() => {
         loadMovies();
         hideLoading();
         renderMovies(movies);
         setupEventListeners();
-    }, 500);
+        console.log('App initialized successfully');
+    }, 100);
 }
 
 function loadMovies() {
@@ -60,6 +62,26 @@ function loadMovies() {
             rutubePageUrl: "https://rutube.ru/video/1234567893/",
             category: "cartoons",
             description: "Бесстрашная Анна отправляется в горы, чтобы найти свою сестру Эльзу."
+        },
+        {
+            id: 5,
+            title: "Джон Уик 4",
+            year: "2023",
+            poster: "https://images.unsplash.com/photo-1485846234645-a62644f84728?w=300&h=400&fit=crop",
+            rutubeEmbedUrl: "https://rutube.ru/play/embed/1234567894",
+            rutubePageUrl: "https://rutube.ru/video/1234567894/",
+            category: "films",
+            description: "Джон Уик продолжает бороться с мафией и наемниками."
+        },
+        {
+            id: 6,
+            title: "Ведьмак",
+            year: "2019",
+            poster: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=300&h=400&fit=crop",
+            rutubeEmbedUrl: "https://rutube.ru/play/embed/1234567895",
+            rutubePageUrl: "https://rutube.ru/video/1234567895/",
+            category: "series",
+            description: "Геральт из Ривии, мутант-охотник на чудовищ, пытается найти свое место в мире."
         }
     ];
     
@@ -98,7 +120,7 @@ function openMovie(movieId) {
         title: `${movie.title} (${movie.year})`,
         message: movie.description,
         buttons: [
-            {id: 'watch', type: 'default', text: 'Смотреть фильм'},
+            {id: 'watch', type: 'default', text: '🎥 Смотреть'},
             {id: 'cancel', type: 'cancel'}
         ]
     }, function(buttonId) {
@@ -154,7 +176,6 @@ function setupEventListeners() {
         });
     });
     
-    // ESC для закрытия плеера
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
             closePlayer();
@@ -189,5 +210,5 @@ function hideLoading() {
     document.getElementById('loading').style.display = 'none';
 }
 
-// Запуск приложения
+// Запуск при загрузке страницы
 document.addEventListener('DOMContentLoaded', initApp);
