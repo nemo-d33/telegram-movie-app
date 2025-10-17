@@ -4,124 +4,202 @@
     box-sizing: border-box;
 }
 
+:root {
+    --glass-bg: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    --glass-blur: blur(20px);
+    --accent-color: rgba(104, 181, 255, 0.7);
+    --accent-hover: rgba(124, 201, 255, 0.9);
+}
+
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'SF Pro Display', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     min-height: 100vh;
     padding: 20px;
     line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* Liquid Glass Background Effects */
+.glass-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%);
+    z-index: -1;
+    animation: liquidShift 8s ease-in-out infinite alternate;
+}
+
+@keyframes liquidShift {
+    0% { transform: translate(0px, 0px) scale(1); }
+    100% { transform: translate(10px, 10px) scale(1.02); }
 }
 
 .container {
-    max-width: 100%;
+    max-width: 1200px;
     margin: 0 auto;
+    position: relative;
+    z-index: 1;
 }
 
-.header {
-    text-align: center;
+/* Glass Header Styles */
+.glass-header {
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    padding: 30px;
     margin-bottom: 30px;
-    padding: 20px 0;
+    box-shadow: var(--glass-shadow);
+    text-align: center;
+    animation: glassGlow 3s ease-in-out infinite alternate;
 }
 
-.header h1 {
-    font-size: 2.5em;
-    margin-bottom: 10px;
-    background: linear-gradient(45deg, #ff6b6b, #ee5a24, #feca57);
+@keyframes glassGlow {
+    0% { box-shadow: var(--glass-shadow); }
+    100% { box-shadow: 0 8px 40px rgba(104, 181, 255, 0.4); }
+}
+
+.glass-title {
+    font-size: 3em;
+    font-weight: 700;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, #fff 0%, rgba(255, 255, 255, 0.8) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    text-shadow: 0 2px 10px rgba(255, 255, 255, 0.2);
 }
 
-.header p {
-    color: #888;
-    font-size: 1.1em;
+.glass-subtitle {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1.2em;
+    font-weight: 300;
 }
 
-.search-box {
+/* Glass Search */
+.glass-search-container {
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 5px;
     margin: 20px 0;
-    text-align: center;
+    box-shadow: var(--glass-shadow);
 }
 
-.search-input {
-    width: 90%;
-    max-width: 400px;
-    padding: 15px 20px;
+.glass-search-input {
+    width: 100%;
+    background: transparent;
     border: none;
-    border-radius: 25px;
-    background: rgba(255, 255, 255, 0.1);
+    padding: 15px 20px;
     color: white;
     font-size: 16px;
     outline: none;
-    backdrop-filter: blur(10px);
-    transition: all 0.3s ease;
+    border-radius: 15px;
 }
 
-.search-input:focus {
-    background: rgba(255, 255, 255, 0.15);
-    box-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
+.glass-search-input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
 }
 
-.search-input::placeholder {
-    color: #aaa;
-}
-
-.categories {
+/* Glass Categories */
+.glass-categories {
     display: flex;
     justify-content: center;
-    gap: 10px;
+    gap: 12px;
     margin-bottom: 30px;
     flex-wrap: wrap;
 }
 
-.category-btn {
-    padding: 12px 20px;
-    border: none;
-    border-radius: 20px;
-    background: rgba(255, 255, 255, 0.1);
+.glass-category-btn {
+    padding: 14px 24px;
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
     color: white;
     cursor: pointer;
     transition: all 0.3s ease;
-    font-size: 14px;
-    backdrop-filter: blur(10px);
+    font-size: 15px;
+    font-weight: 500;
+    box-shadow: var(--glass-shadow);
+    position: relative;
+    overflow: hidden;
 }
 
-.category-btn.active,
-.category-btn:hover {
-    background: #ee5a24;
+.glass-category-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.glass-category-btn:hover::before {
+    left: 100%;
+}
+
+.glass-category-btn.active,
+.glass-category-btn:hover {
+    background: var(--accent-color);
+    border-color: var(--accent-hover);
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(238, 90, 36, 0.4);
+    box-shadow: 0 12px 40px rgba(104, 181, 255, 0.4);
 }
 
+/* Glass Movie Cards */
 .movies-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 15px;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
     margin-bottom: 40px;
 }
 
 .movie-card {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 15px;
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
     overflow: hidden;
-    transition: all 0.3s ease;
+    transition: all 0.4s ease;
     cursor: pointer;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: var(--glass-shadow);
+    position: relative;
+}
+
+.movie-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
 }
 
 .movie-card:hover {
-    transform: translateY(-5px);
-    background: rgba(255, 255, 255, 0.1);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    transform: translateY(-8px) scale(1.02);
+    border-color: var(--accent-color);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px var(--accent-color);
 }
 
 .movie-poster {
     width: 100%;
-    height: 200px;
+    height: 320px;
     object-fit: cover;
-    background: #333;
-    transition: transform 0.3s ease;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    transition: transform 0.4s ease;
 }
 
 .movie-card:hover .movie-poster {
@@ -129,13 +207,15 @@ body {
 }
 
 .movie-info {
-    padding: 12px;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
 }
 
 .movie-title {
-    font-size: 0.9em;
-    font-weight: bold;
-    margin-bottom: 5px;
+    font-size: 1.1em;
+    font-weight: 600;
+    margin-bottom: 8px;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -143,18 +223,25 @@ body {
 }
 
 .movie-year {
-    color: #888;
-    font-size: 0.8em;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9em;
+    font-weight: 300;
 }
 
-.loading {
+/* Glass Loading */
+.glass-loading {
     text-align: center;
-    padding: 40px;
-    font-size: 1.2em;
-    color: #888;
+    padding: 50px;
+    font-size: 1.3em;
+    color: rgba(255, 255, 255, 0.8);
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    box-shadow: var(--glass-shadow);
 }
 
-.loading::after {
+.glass-loading::after {
     content: '';
     animation: loading 1.5s infinite;
 }
@@ -165,17 +252,49 @@ body {
     66% { content: '...'; }
 }
 
-/* RuTube Player Styles */
+/* Enhanced Video Player Styles */
 .player-container {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: #000;
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(30px);
     z-index: 1000;
     display: none;
     flex-direction: column;
+}
+
+.glass-player-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    z-index: 1001;
+}
+
+.glass-back-btn, .glass-fullscreen-btn {
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: var(--glass-shadow);
+}
+
+.glass-back-btn:hover, .glass-fullscreen-btn:hover {
+    background: var(--accent-color);
+    border-color: var(--accent-hover);
+    transform: translateY(-2px);
 }
 
 .rutube-player {
@@ -188,85 +307,71 @@ body {
 }
 
 .rutube-iframe {
-    width: 100%;
-    height: 100%;
+    width: 95%;
+    height: 80%;
     border: none;
-    background: #000;
-}
-
-.back-btn {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    z-index: 1001;
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    padding: 12px 18px;
-    border-radius: 10px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: bold;
-    transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
-}
-
-.back-btn:hover {
-    background: rgba(238, 90, 36, 0.9);
-    border-color: #ee5a24;
-    transform: scale(1.05);
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
 }
 
 /* Mobile Responsive */
 @media (max-width: 768px) {
     .movies-grid {
-        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-        gap: 10px;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 15px;
     }
     
     .movie-poster {
-        height: 180px;
+        height: 280px;
     }
     
     body {
         padding: 15px;
     }
     
-    .header h1 {
-        font-size: 2em;
+    .glass-title {
+        font-size: 2.2em;
+    }
+    
+    .glass-category-btn {
+        padding: 12px 18px;
+        font-size: 14px;
+    }
+    
+    .rutube-iframe {
+        width: 100%;
+        height: 70%;
+        border-radius: 0;
     }
 }
 
 @media (max-width: 480px) {
     .movies-grid {
-        grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-        gap: 8px;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 12px;
     }
     
     .movie-poster {
-        height: 160px;
+        height: 220px;
     }
     
-    .category-btn {
-        padding: 10px 15px;
-        font-size: 12px;
+    .glass-categories {
+        gap: 8px;
     }
     
-    .back-btn {
-        top: 10px;
-        left: 10px;
+    .glass-category-btn {
         padding: 10px 15px;
-        font-size: 14px;
+        font-size: 13px;
     }
 }
 
-/* Landscape mode support */
-@media (max-height: 500px) and (orientation: landscape) {
-    .player-container {
-        padding: 0;
-    }
-    
-    .rutube-player {
-        height: 100vh;
-    }
+/* Fullscreen mode */
+.player-container.fullscreen {
+    padding: 0;
+}
+
+.player-container.fullscreen .rutube-iframe {
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
 }
