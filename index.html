@@ -3,35 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎬 Мой Кинотеатр</title>
+    <title>🎬 Кинотеатр | Liquid Glass</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
+    <div class="glass-background"></div>
+    
     <div class="container">
         <header class="header">
-            <h1>🎬 Мой Кинотеатр</h1>
-            <p>Смотрите фильмы в отличном качестве</p>
+            <div class="glass-header">
+                <h1 class="glass-title">🎬 Кинотеатр</h1>
+                <p class="glass-subtitle">Immerse in cinematic beauty</p>
+            </div>
         </header>
         
-        <div class="search-box">
-            <input type="text" class="search-input" id="searchInput" placeholder="🔍 Поиск фильмов...">
+        <div class="search-section">
+            <div class="glass-search-container">
+                <input type="text" class="glass-search-input" id="searchInput" placeholder="🔍 Поиск фильмов...">
+            </div>
         </div>
         
-        <div class="categories">
-            <button class="category-btn active" data-category="all">Все</button>
-            <button class="category-btn" data-category="films">Фильмы</button>
-            <button class="category-btn" data-category="series">Сериалы</button>
-            <button class="category-btn" data-category="cartoons">Мультфильмы</button>
+        <div class="categories-section">
+            <div class="glass-categories">
+                <button class="glass-category-btn active" data-category="all">Все</button>
+                <button class="glass-category-btn" data-category="films">Фильмы</button>
+                <button class="glass-category-btn" data-category="series">Сериалы</button>
+                <button class="glass-category-btn" data-category="cartoons">Мультфильмы</button>
+            </div>
         </div>
         
         <div id="moviesList" class="movies-grid"></div>
-        <div id="loading" class="loading">Загрузка фильмов</div>
+        <div id="loading" class="glass-loading">Загрузка фильмов...</div>
     </div>
     
-    <!-- RuTube Video Player Container -->
+    <!-- Video Player Container -->
     <div class="player-container" id="playerContainer">
-        <button class="back-btn" onclick="closePlayer()">← Назад</button>
+        <div class="glass-player-header">
+            <button class="glass-back-btn" onclick="closePlayer()">← Назад</button>
+            <button class="glass-fullscreen-btn" onclick="toggleFullscreen()">⛶ Полный экран</button>
+        </div>
         <div id="rutubePlayer" class="rutube-player"></div>
     </div>
 
