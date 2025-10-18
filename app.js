@@ -1,16 +1,25 @@
+// Инициализация Telegram Web App
 const tg = window.Telegram.WebApp;
 
-let movies = [];
-let filteredMovies = [];
-let currentCategory = 'all';
+// Глобальные переменные для хранения данных
+let movies = [];          // Полный список фильмов
+let filteredMovies = [];  // Отфильтрованный список фильмов
+let currentCategory = 'all'; // Текущая выбранная категория
 
+/**
+ * Основная функция инициализации приложения
+ * Вызывается при загрузке DOM
+ */
 function initApp() {
     console.log('Initializing app...');
+    
+    // Инициализация Telegram Web App
     tg.ready();
-    tg.expand();
+    tg.expand(); // Развернуть приложение на весь экран
     
     showLoading();
     
+    // Имитация загрузки данных с задержкой
     setTimeout(() => {
         loadMovies();
         hideLoading();
@@ -21,6 +30,10 @@ function initApp() {
     }, 100);
 }
 
+/**
+ * Инициализация слайдера громкости
+ * Создает интерактивный слайдер с обработкой событий мыши и касаний
+ */
 function initVolumeSlider() {
     const slider = document.getElementById('volumeSlider');
     const progress = document.getElementById('volumeProgress');
@@ -29,26 +42,40 @@ function initVolumeSlider() {
     let isDragging = false;
     let sliderRect = slider.getBoundingClientRect();
 
+    /**
+     * Обновляет позицию thumb и прогресс слайдера
+     * @param {number} percent - процент громкости (0-100)
+     */
     const updateThumbAndProgress = (percent) => {
-        percent = Math.max(0, Math.min(100, percent));
+        percent = Math.max(0, Math.min(100, percent)); // Ограничение диапазона
         const px = (percent / 100) * sliderRect.width;
         progress.style.width = `${percent}%`;
         thumb.style.left = `${px}px`;
         
-        // Update volume in video iframe
+        // Обновление громкости в видео
         updateVideoVolume(percent / 100);
     }
 
+    /**
+     * Рассчитывает процент на основе позиции курсора
+     * @param {number} clientX - координата X курсора
+     * @returns {number} процент положения
+     */
     const getPercentFromClientX = (clientX) => {
         const offsetX = clientX - sliderRect.left;
         return (offsetX / sliderRect.width) * 100;
     }
 
+    /**
+     * Обработчик перемещения курсора/касания
+     * @param {number} clientX - координата X
+     */
     const onMove = (clientX) => {
         const percent = getPercentFromClientX(clientX);
         updateThumbAndProgress(percent);
     }
 
+    // Обработчики событий мыши
     const onMouseDown = (e) => {
         isDragging = true;
         sliderRect = slider.getBoundingClientRect();
@@ -57,6 +84,7 @@ function initVolumeSlider() {
         e.preventDefault();
     }
 
+    // Обработчики событий касания
     const onTouchStart = (e) => {
         isDragging = true;
         sliderRect = slider.getBoundingClientRect();
@@ -74,20 +102,23 @@ function initVolumeSlider() {
         e.preventDefault();
     }
 
+    // Остановка перетаскивания
     const stopDrag = () => {
         isDragging = false;
         thumb.classList.remove('active');
     }
 
-    // Events
+    // Назначение обработчиков событий для thumb
     thumb.addEventListener('mousedown', onMouseDown);
     thumb.addEventListener('touchstart', onTouchStart, { passive: false });
 
+    // Глобальные обработчики событий перетаскивания
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', stopDrag);
     document.addEventListener('touchmove', onTouchMove, { passive: false });
     document.addEventListener('touchend', stopDrag);
 
+    // Обработчики клика по слайдеру
     slider.addEventListener('mousedown', (e) => {
         sliderRect = slider.getBoundingClientRect();
         onMove(e.clientX);
@@ -99,20 +130,27 @@ function initVolumeSlider() {
         e.preventDefault();
     }, { passive: false });
 
-    // Initialize with 70% volume
+    // Инициализация слайдера значением 70%
     updateThumbAndProgress(70);
 }
 
+/**
+ * Обновление громкости видео (заглушка)
+ * @param {number} volume - громкость от 0 до 1
+ */
 function updateVideoVolume(volume) {
     const iframe = document.querySelector('.rutube-iframe');
     if (iframe && iframe.contentWindow) {
-        // Note: RuTube iframe may not support external volume control
-        // This is primarily a UI demonstration
+        // Заметка: RuTube iframe может не поддерживать внешний контроль громкости
+        // Это в основном демонстрация UI
         console.log('Setting volume to:', volume);
     }
 }
 
-// Остальные функции остаются без изменений...
+/**
+ * Загрузка данных о фильмах
+ * В реальном приложении здесь был бы API запрос
+ */
 function loadMovies() {
     movies = [
         {
@@ -135,15 +173,21 @@ function loadMovies() {
             category: "films",
             description: "Оставшиеся в живых члены команды Мстителей пытаются исправить последствия действий Таноса."
         }
-        // ... остальные фильмы
+        // ... можно добавить больше фильмов
     ];
     
+    // Инициализация отфильтрованного списка
     filteredMovies = [...movies];
 }
 
+/**
+ * Отрисовка списка фильмов в сетке
+ * @param {Array} moviesArray - массив фильмов для отображения
+ */
 function renderMovies(moviesArray) {
     const moviesList = document.getElementById('moviesList');
     
+    // Проверка на пустой список
     if (moviesArray.length === 0) {
         moviesList.innerHTML = `
             <div class="empty-state">
@@ -154,6 +198,7 @@ function renderMovies(moviesArray) {
         return;
     }
     
+    // Генерация HTML для каждой карточки фильма
     moviesList.innerHTML = moviesArray.map(movie => `
         <div class="movie-card" onclick="openMovie(${movie.id})">
             <img src="${movie.poster}" alt="${movie.title}" class="movie-poster"
@@ -163,13 +208,18 @@ function renderMovies(moviesArray) {
                 <div class="movie-year">${movie.year}</div>
             </div>
         </div>
-    `).join('');
+    `).join(''); // Объединение массива в строку
 }
 
+/**
+ * Открытие попапа с информацией о фильме
+ * @param {number} movieId - ID фильма
+ */
 function openMovie(movieId) {
     const movie = movies.find(m => m.id === movieId);
     if (!movie) return;
     
+    // Показ Telegram попапа
     tg.showPopup({
         title: `${movie.title} (${movie.year})`,
         message: movie.description,
@@ -184,10 +234,16 @@ function openMovie(movieId) {
     });
 }
 
+/**
+ * Воспроизведение видео в RuTube плеере
+ * @param {string} embedUrl - URL для embed iframe
+ * @param {string} pageUrl - URL страницы видео
+ */
 function playRuTubeVideo(embedUrl, pageUrl) {
     const playerContainer = document.getElementById('playerContainer');
     const videoPlayerContainer = document.getElementById('rutubePlayer');
     
+    // Вставка iframe с видео
     videoPlayerContainer.innerHTML = `
         <iframe 
             class="rutube-iframe"
@@ -198,30 +254,43 @@ function playRuTubeVideo(embedUrl, pageUrl) {
         ></iframe>
     `;
     
+    // Показ контейнера с плеером
     playerContainer.style.display = 'flex';
-    document.body.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden'; // Блокировка прокрутки основного контента
 }
 
+/**
+ * Закрытие видеоплеера
+ */
 function closePlayer() {
     const playerContainer = document.getElementById('playerContainer');
     const videoPlayerContainer = document.getElementById('rutubePlayer');
     
+    // Очистка iframe и скрытие контейнера
     videoPlayerContainer.innerHTML = '';
     playerContainer.style.display = 'none';
-    document.body.style.overflow = 'auto';
+    document.body.style.overflow = 'auto'; // Восстановление прокрутки
 }
 
+/**
+ * Настройка всех обработчиков событий
+ */
 function setupEventListeners() {
     const searchInput = document.getElementById('searchInput');
+    
+    // Обработчик ввода в поисковую строку
     searchInput.addEventListener('input', function(e) {
         const searchTerm = e.target.value.toLowerCase().trim();
         filterMovies(searchTerm, currentCategory);
     });
     
+    // Обработчики кликов по категориям
     const categoryBtns = document.querySelectorAll('.category-btn');
     categoryBtns.forEach(btn => {
         btn.addEventListener('click', function() {
+            // Сброс активного состояния у всех кнопок
             categoryBtns.forEach(b => b.classList.remove('active'));
+            // Установка активного состояния на текущую кнопку
             this.classList.add('active');
             
             const category = this.dataset.category;
@@ -230,6 +299,7 @@ function setupEventListeners() {
         });
     });
     
+    // Обработчик клавиши Escape для закрытия плеера
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
             closePlayer();
@@ -237,13 +307,20 @@ function setupEventListeners() {
     });
 }
 
+/**
+ * Фильтрация фильмов по поисковому запросу и категории
+ * @param {string} searchTerm - поисковый запрос
+ * @param {string} category - категория для фильтрации
+ */
 function filterMovies(searchTerm, category) {
     let results = [...movies];
     
+    // Фильтрация по категории
     if (category !== 'all') {
         results = results.filter(movie => movie.category === category);
     }
     
+    // Фильтрация по поисковому запросу
     if (searchTerm) {
         results = results.filter(movie => 
             movie.title.toLowerCase().includes(searchTerm) ||
@@ -251,17 +328,25 @@ function filterMovies(searchTerm, category) {
         );
     }
     
+    // Обновление отфильтрованного списка и перерисовка
     filteredMovies = results;
     renderMovies(filteredMovies);
 }
 
+/**
+ * Показ индикатора загрузки
+ */
 function showLoading() {
     document.getElementById('loading').style.display = 'block';
     document.getElementById('moviesList').innerHTML = '';
 }
 
+/**
+ * Скрытие индикатора загрузки
+ */
 function hideLoading() {
     document.getElementById('loading').style.display = 'none';
 }
 
+// Инициализация приложения после загрузки DOM
 document.addEventListener('DOMContentLoaded', initApp);
