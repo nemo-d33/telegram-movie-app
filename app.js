@@ -579,7 +579,7 @@ function loadMovies() {
             id: 47,
             title: "Как приручить дракона",
             year: "2010",
-            poster: "https://avatars.mds.yandex.net/get-kinopoisk-image/1773646/9f6e5e5e-5e5e-5e5e-5e5e-5e5e5e5e5e5e/600x900",
+            poster: "https://images.kinorium.com/movie/poster/399382/h280_52658332.jpg",
             rutubeEmbedUrl: "https://rutube.ru/play/embed/how-to-train-your-dragon/",
             rutubePageUrl: "https://rutube.ru/video/how-to-train-your-dragon/",
             category: "cartoons",
