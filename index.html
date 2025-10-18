@@ -10,7 +10,7 @@
 <body>
     <div class="container">
         <header class="header">
-            <h1>🎬 Кинотеатр</h1>
+            <h1>🎬 Мой Кинотеатр</h1>
             <p>Смотрите фильмы в отличном качестве</p>
         </header>
         
@@ -25,13 +25,19 @@
             <button class="category-btn" data-category="cartoons">Мультфильмы</button>
         </div>
         
-        <div id="moviesList" class="movies-grid"></div>
-        <div id="loading" class="loading">Загрузка...</div>
+        <div id="moviesList" class="movies-grid">
+            <!-- Фильмы будут здесь -->
+        </div>
+        
+        <div id="loading" class="loading">Загрузка фильмов...</div>
     </div>
     
+    <!-- Видео плеер -->
     <div class="player-container" id="playerContainer">
         <button class="back-btn" onclick="closePlayer()">← Назад</button>
-        <div id="rutubePlayer" class="rutube-player"></div>
+        <div id="rutubePlayer" class="rutube-player">
+            <!-- Видео будет здесь -->
+        </div>
     </div>
 
     <script src="app.js"></script>
