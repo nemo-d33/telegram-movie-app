@@ -1,328 +1,194 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+const tg = window.Telegram.WebApp;
+
+let movies = [];
+let filteredMovies = [];
+let currentCategory = 'all';
+
+function initApp() {
+    console.log('Initializing app...');
+    tg.ready();
+    tg.expand();
+    
+    showLoading();
+    
+    setTimeout(() => {
+        loadMovies();
+        hideLoading();
+        renderMovies(movies);
+        setupEventListeners();
+        console.log('App initialized successfully');
+    }, 100);
 }
 
-body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: linear-gradient(135deg, #0f1a2b 0%, #1a2b45 50%, #0f1a2b 100%);
-    color: white;
-    min-height: 100vh;
-    padding: 20px;
-    line-height: 1.4;
+function loadMovies() {
+    movies = [
+        {
+            id: 1,
+            title: "Форсаж 9",
+            year: "2021",
+            poster: "https://images.unsplash.com/photo-1594909122845-11baa439b7bf?w=300&h=400&fit=crop",
+            rutubeEmbedUrl: "https://rutube.ru/play/embed/bb0c848e121e79263789b3b19460bff0/",
+            rutubePageUrl: "https://rutube.ru/video/bb0c848e121e79263789b3b19460bff0/",
+            category: "films",
+            description: "Доминик Торетто ведет спокойную жизнь с Летти и своим сыном."
+        },
+        {
+            id: 2,
+            title: "Мстители: Финал",
+            year: "2019",
+            poster: "https://images.unsplash.com/photo-1635805737707-575885ab0820?w=300&h=400&fit=crop",
+            rutubeEmbedUrl: "https://rutube.ru/play/embed/1234567891",
+            rutubePageUrl: "https://rutube.ru/video/1234567891/",
+            category: "films",
+            description: "Оставшиеся в живых члены команды Мстителей пытаются исправить последствия действий Таноса."
+        },
+        {
+            id: 3,
+            title: "Игра в кальмара",
+            year: "2021",
+            poster: "https://images.unsplash.com/photo-1560169897-fc0cdbdfa4d5?w=300&h=400&fit=crop",
+            rutubeEmbedUrl: "https://rutube.ru/play/embed/1234567892",
+            rutubePageUrl: "https://rutube.ru/video/1234567892/",
+            category: "series",
+            description: "Сотни игроков-банкротов принимают приглашение сыграть в детские игры на выживание."
+        },
+        {
+            id: 4,
+            title: "Холодное сердце",
+            year: "2013",
+            poster: "https://images.unsplash.com/photo-1618336756473-37d8fcf7d7be?w=300&h=400&fit=crop",
+            rutubeEmbedUrl: "https://rutube.ru/play/embed/1234567893",
+            rutubePageUrl: "https://rutube.ru/video/1234567893/",
+            category: "cartoons",
+            description: "Бесстрашная Анна отправляется в горы, чтобы найти свою сестру Эльзу."
+        }
+    ];
+    
+    filteredMovies = [...movies];
 }
 
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-/* Liquid Glass Effect Base Class */
-.glass-effect {
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-radius: 15px;
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-}
-
-/* Header */
-.header {
-    text-align: center;
-    margin-bottom: 30px;
-    padding: 30px 20px;
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-radius: 20px;
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-}
-
-.header h1 {
-    font-size: 2.2em;
-    font-weight: 700;
-    margin-bottom: 8px;
-    color: white;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-}
-
-.header p {
-    color: rgba(255, 255, 255, 0.9);
-    font-size: 1em;
-    font-weight: 400;
-}
-
-/* Search */
-.search-box {
-    margin: 20px 0;
-    text-align: center;
-}
-
-.search-input {
-    width: 90%;
-    max-width: 400px;
-    padding: 14px 20px;
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    border-radius: 15px;
-    color: white;
-    font-size: 16px;
-    outline: none;
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-    transition: all 0.3s ease;
-}
-
-.search-input::placeholder {
-    color: rgba(255, 255, 255, 0.7);
-}
-
-.search-input:focus {
-    background: rgba(255, 255, 255, 0.25);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.5);
-}
-
-/* Categories */
-.categories {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    margin-bottom: 30px;
-    flex-wrap: wrap;
-}
-
-.category-btn {
-    padding: 12px 20px;
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    border-radius: 12px;
-    color: white;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-}
-
-.category-btn:hover {
-    background: rgba(255, 255, 255, 0.25);
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    transform: translateY(-2px);
-    box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.5);
-}
-
-.category-btn.active {
-    background: rgba(74, 144, 226, 0.4);
-    border: 1px solid rgba(74, 144, 226, 0.6);
-    box-shadow: 0 8px 32px 0 rgba(74, 144, 226, 0.4);
-}
-
-/* Movie Cards */
-.movies-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 16px;
-    margin-bottom: 40px;
-}
-
-.movie-card {
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    border-radius: 16px;
-    overflow: hidden;
-    transition: all 0.3s ease;
-    cursor: pointer;
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-}
-
-.movie-card:hover {
-    transform: translateY(-5px);
-    background: rgba(255, 255, 255, 0.25);
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.5);
-}
-
-.movie-poster {
-    width: 100%;
-    height: 220px;
-    object-fit: cover;
-    background: linear-gradient(135deg, #1a2b45 0%, #2d4a7a 100%);
-}
-
-.movie-info {
-    padding: 14px;
-    background: rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(5px);
-}
-
-.movie-title {
-    font-size: 0.9em;
-    font-weight: 600;
-    margin-bottom: 6px;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    color: white;
-}
-
-.movie-year {
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 0.85em;
-}
-
-/* Loading */
-.loading {
-    text-align: center;
-    padding: 40px;
-    font-size: 1.1em;
-    color: rgba(255, 255, 255, 0.9);
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-radius: 15px;
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-}
-
-/* Video Player */
-.player-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, #0a1525 0%, #1a2b45 100%);
-    z-index: 1000;
-    display: none;
-}
-
-.rutube-player {
-    width: 100%;
-    height: 100%;
-}
-
-.rutube-iframe {
-    width: 100%;
-    height: 100%;
-    border: none;
-}
-
-.back-btn {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    z-index: 1001;
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    padding: 12px 18px;
-    border-radius: 10px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-}
-
-.back-btn:hover {
-    background: rgba(255, 255, 255, 0.25);
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    transform: translateY(-2px);
-}
-
-/* Empty State */
-.empty-state {
-    grid-column: 1 / -1;
-    text-align: center;
-    padding: 50px 20px;
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-radius: 15px;
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-}
-
-.empty-state h3 {
-    font-size: 1.3em;
-    margin-bottom: 10px;
-    color: white;
-}
-
-.empty-state p {
-    color: rgba(255, 255, 255, 0.8);
-}
-
-/* Mobile Optimization */
-@media (max-width: 768px) {
-    body {
-        padding: 15px;
+function renderMovies(moviesArray) {
+    const moviesList = document.getElementById('moviesList');
+    
+    if (moviesArray.length === 0) {
+        moviesList.innerHTML = `
+            <div class="empty-state">
+                <h3>🎬 Фильмы не найдены</h3>
+                <p>Попробуйте изменить поисковый запрос или выбрать другую категорию</p>
+            </div>
+        `;
+        return;
     }
     
-    .movies-grid {
-        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-        gap: 12px;
-    }
-    
-    .movie-poster {
-        height: 190px;
-    }
-    
-    .header {
-        padding: 25px 15px;
-        margin-bottom: 20px;
-    }
-    
-    .header h1 {
-        font-size: 1.8em;
-    }
-    
-    .search-input {
-        padding: 12px 18px;
-        font-size: 15px;
-    }
-    
-    .categories {
-        gap: 8px;
-    }
-    
-    .category-btn {
-        padding: 10px 16px;
-        font-size: 13px;
-    }
+    moviesList.innerHTML = moviesArray.map(movie => `
+        <div class="movie-card" onclick="openMovie(${movie.id})">
+            <img src="${movie.poster}" alt="${movie.title}" class="movie-poster"
+                 onerror="this.src='https://images.unsplash.com/photo-1485846234645-a62644f84728?w=300&h=400&fit=crop'">
+            <div class="movie-info">
+                <div class="movie-title">${movie.title}</div>
+                <div class="movie-year">${movie.year}</div>
+            </div>
+        </div>
+    `).join('');
 }
 
-@media (max-width: 480px) {
-    .movies-grid {
-        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-        gap: 10px;
-    }
+// Остальные функции остаются без изменений...
+function openMovie(movieId) {
+    const movie = movies.find(m => m.id === movieId);
+    if (!movie) return;
     
-    .movie-poster {
-        height: 180px;
-    }
-    
-    .category-btn {
-        padding: 10px 14px;
-        font-size: 12px;
-    }
-    
-    .back-btn {
-        top: 15px;
-        left: 15px;
-        padding: 10px 15px;
-        font-size: 14px;
-    }
+    tg.showPopup({
+        title: `${movie.title} (${movie.year})`,
+        message: movie.description,
+        buttons: [
+            {id: 'watch', type: 'default', text: '🎥 Смотреть'},
+            {id: 'cancel', type: 'cancel'}
+        ]
+    }, function(buttonId) {
+        if (buttonId === 'watch') {
+            playRuTubeVideo(movie.rutubeEmbedUrl, movie.rutubePageUrl);
+        }
+    });
 }
+
+function playRuTubeVideo(embedUrl, pageUrl) {
+    const playerContainer = document.getElementById('playerContainer');
+    const videoPlayerContainer = document.getElementById('rutubePlayer');
+    
+    videoPlayerContainer.innerHTML = `
+        <iframe 
+            class="rutube-iframe"
+            src="${embedUrl}" 
+            frameborder="0" 
+            allow="autoplay; encrypted-media; fullscreen"
+            allowfullscreen
+        ></iframe>
+    `;
+    
+    playerContainer.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+}
+
+function closePlayer() {
+    const playerContainer = document.getElementById('playerContainer');
+    const videoPlayerContainer = document.getElementById('rutubePlayer');
+    
+    videoPlayerContainer.innerHTML = '';
+    playerContainer.style.display = 'none';
+    document.body.style.overflow = 'auto';
+}
+
+function setupEventListeners() {
+    const searchInput = document.getElementById('searchInput');
+    searchInput.addEventListener('input', function(e) {
+        const searchTerm = e.target.value.toLowerCase().trim();
+        filterMovies(searchTerm, currentCategory);
+    });
+    
+    const categoryBtns = document.querySelectorAll('.category-btn');
+    categoryBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            categoryBtns.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            
+            const category = this.dataset.category;
+            currentCategory = category;
+            filterMovies(searchInput.value.toLowerCase().trim(), category);
+        });
+    });
+    
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closePlayer();
+        }
+    });
+}
+
+function filterMovies(searchTerm, category) {
+    let results = [...movies];
+    
+    if (category !== 'all') {
+        results = results.filter(movie => movie.category === category);
+    }
+    
+    if (searchTerm) {
+        results = results.filter(movie => 
+            movie.title.toLowerCase().includes(searchTerm) ||
+            movie.description.toLowerCase().includes(searchTerm)
+        );
+    }
+    
+    filteredMovies = results;
+    renderMovies(filteredMovies);
+}
+
+function showLoading() {
+    document.getElementById('loading').style.display = 'block';
+    document.getElementById('moviesList').innerHTML = '';
+}
+
+function hideLoading() {
+    document.getElementById('loading').style.display = 'none';
+}
+
+document.addEventListener('DOMContentLoaded', initApp);
