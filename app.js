@@ -3,14 +3,20 @@ const tg = window.Telegram.WebApp;
 let movies = [];
 let filteredMovies = [];
 let currentCategory = 'all';
+let isClosingPlayer = false;
+let searchTimeout = null;
 
 function initApp() {
     console.log('Initializing app...');
-    tg.ready();
-    tg.expand();
+    
+    if (tg && tg.ready) {
+        tg.ready();
+        tg.expand();
+    }
     
     showLoading();
     
+    // Имитация загрузки данных
     setTimeout(() => {
         loadMovies();
         hideLoading();
@@ -18,7 +24,7 @@ function initApp() {
         setupEventListeners();
         initVolumeSlider();
         console.log('App initialized successfully');
-    }, 100);
+    }, 800);
 }
 
 function initVolumeSlider() {
@@ -35,7 +41,6 @@ function initVolumeSlider() {
         progress.style.width = `${percent}%`;
         thumb.style.left = `${px}px`;
         
-        // Update volume in video iframe
         updateVideoVolume(percent / 100);
     }
 
@@ -106,13 +111,10 @@ function initVolumeSlider() {
 function updateVideoVolume(volume) {
     const iframe = document.querySelector('.rutube-iframe');
     if (iframe && iframe.contentWindow) {
-        // Note: RuTube iframe may not support external volume control
-        // This is primarily a UI demonstration
         console.log('Setting volume to:', volume);
     }
 }
 
-// Остальные функции остаются без изменений...
 function loadMovies() {
     movies = [
         {
@@ -130,12 +132,51 @@ function loadMovies() {
             title: "Мстители: Финал",
             year: "2019",
             poster: "https://images.unsplash.com/photo-1635805737707-575885ab0820?w=300&h=400&fit=crop",
-            rutubeEmbedUrl: "https://rutube.ru/play/embed/1234567891",
-            rutubePageUrl: "https://rutube.ru/video/1234567891/",
+            rutubeEmbedUrl: "https://rutube.ru/play/embed/10675995/",
+            rutubePageUrl: "https://rutube.ru/video/10675995/",
             category: "films",
             description: "Оставшиеся в живых члены команды Мстителей пытаются исправить последствия действий Таноса."
+        },
+        {
+            id: 3,
+            title: "Человек-паук: Нет пути домой",
+            year: "2021",
+            poster: "https://images.unsplash.com/photo-1635805737707-575885ab0820?w=300&h=400&fit=crop",
+            rutubeEmbedUrl: "https://rutube.ru/play/embed/10675995/",
+            rutubePageUrl: "https://rutube.ru/video/10675995/",
+            category: "films",
+            description: "Питер Паркер обращается за помощью к Доктору Стрэнджу."
+        },
+        {
+            id: 4,
+            title: "Игра престолов",
+            year: "2011-2019",
+            poster: "https://images.unsplash.com/photo-1594909122845-11baa439b7bf?w=300&h=400&fit=crop",
+            rutubeEmbedUrl: "https://rutube.ru/play/embed/10675995/",
+            rutubePageUrl: "https://rutube.ru/video/10675995/",
+            category: "series",
+            description: "Борьба за Железный трон в вымышленном мире Вестероса."
+        },
+        {
+            id: 5,
+            title: "Холодное сердце",
+            year: "2013",
+            poster: "https://images.unsplash.com/photo-1635805737707-575885ab0820?w=300&h=400&fit=crop",
+            rutubeEmbedUrl: "https://rutube.ru/play/embed/10675995/",
+            rutubePageUrl: "https://rutube.ru/video/10675995/",
+            category: "cartoons",
+            description: "Принцесса Эльза обладает магической силой создавать лед и снег."
+        },
+        {
+            id: 6,
+            title: "Король Лев",
+            year: "1994",
+            poster: "https://images.unsplash.com/photo-1594909122845-11baa439b7bf?w=300&h=400&fit=crop",
+            rutubeEmbedUrl: "https://rutube.ru/play/embed/10675995/",
+            rutubePageUrl: "https://rutube.ru/video/10675995/",
+            category: "cartoons",
+            description: "Молодой львенок Симба познает истинный смысл ответственности."
         }
-        // ... остальные фильмы
     ];
     
     filteredMovies = [...movies];
@@ -154,8 +195,9 @@ function renderMovies(moviesArray) {
         return;
     }
     
-    moviesList.innerHTML = moviesArray.map(movie => `
-        <div class="movie-card" onclick="openMovie(${movie.id})">
+    moviesList.innerHTML = moviesArray.map((movie, index) => `
+        <div class="movie-card" onclick="openMovie(${movie.id})" 
+             style="animation-delay: ${index * 0.1}s">
             <img src="${movie.poster}" alt="${movie.title}" class="movie-poster"
                  onerror="this.src='https://images.unsplash.com/photo-1485846234645-a62644f84728?w=300&h=400&fit=crop'">
             <div class="movie-info">
@@ -170,23 +212,31 @@ function openMovie(movieId) {
     const movie = movies.find(m => m.id === movieId);
     if (!movie) return;
     
-    tg.showPopup({
-        title: `${movie.title} (${movie.year})`,
-        message: movie.description,
-        buttons: [
-            {id: 'watch', type: 'default', text: '🎥 Смотреть'},
-            {id: 'cancel', type: 'cancel'}
-        ]
-    }, function(buttonId) {
-        if (buttonId === 'watch') {
-            playRuTubeVideo(movie.rutubeEmbedUrl, movie.rutubePageUrl);
-        }
-    });
+    if (tg && tg.showPopup) {
+        tg.showPopup({
+            title: `${movie.title} (${movie.year})`,
+            message: movie.description,
+            buttons: [
+                {id: 'watch', type: 'default', text: '🎥 Смотреть'},
+                {id: 'cancel', type: 'cancel'}
+            ]
+        }, function(buttonId) {
+            if (buttonId === 'watch') {
+                playRuTubeVideo(movie.rutubeEmbedUrl, movie.rutubePageUrl);
+            }
+        });
+    } else {
+        // Fallback для браузера
+        playRuTubeVideo(movie.rutubeEmbedUrl, movie.rutubePageUrl);
+    }
 }
 
 function playRuTubeVideo(embedUrl, pageUrl) {
     const playerContainer = document.getElementById('playerContainer');
     const videoPlayerContainer = document.getElementById('rutubePlayer');
+    
+    isClosingPlayer = false;
+    playerContainer.classList.remove('closing');
     
     videoPlayerContainer.innerHTML = `
         <iframe 
@@ -195,6 +245,7 @@ function playRuTubeVideo(embedUrl, pageUrl) {
             frameborder="0" 
             allow="autoplay; encrypted-media; fullscreen"
             allowfullscreen
+            loading="lazy"
         ></iframe>
     `;
     
@@ -203,19 +254,33 @@ function playRuTubeVideo(embedUrl, pageUrl) {
 }
 
 function closePlayer() {
+    if (isClosingPlayer) return;
+    
     const playerContainer = document.getElementById('playerContainer');
     const videoPlayerContainer = document.getElementById('rutubePlayer');
     
-    videoPlayerContainer.innerHTML = '';
-    playerContainer.style.display = 'none';
-    document.body.style.overflow = 'auto';
+    isClosingPlayer = true;
+    playerContainer.classList.add('closing');
+    
+    setTimeout(() => {
+        videoPlayerContainer.innerHTML = '';
+        playerContainer.style.display = 'none';
+        playerContainer.classList.remove('closing');
+        document.body.style.overflow = 'auto';
+        isClosingPlayer = false;
+    }, 300);
 }
 
 function setupEventListeners() {
     const searchInput = document.getElementById('searchInput');
+    
+    // Debounce поиска
     searchInput.addEventListener('input', function(e) {
+        clearTimeout(searchTimeout);
         const searchTerm = e.target.value.toLowerCase().trim();
-        filterMovies(searchTerm, currentCategory);
+        searchTimeout = setTimeout(() => {
+            filterMovies(searchTerm, currentCategory);
+        }, 300);
     });
     
     const categoryBtns = document.querySelectorAll('.category-btn');
@@ -232,6 +297,13 @@ function setupEventListeners() {
     
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
+            closePlayer();
+        }
+    });
+    
+    // Закрытие плеера по клику на затемненную область
+    document.getElementById('playerContainer').addEventListener('click', function(e) {
+        if (e.target === this) {
             closePlayer();
         }
     });
@@ -264,4 +336,5 @@ function hideLoading() {
     document.getElementById('loading').style.display = 'none';
 }
 
+// Инициализация при загрузке DOM
 document.addEventListener('DOMContentLoaded', initApp);
