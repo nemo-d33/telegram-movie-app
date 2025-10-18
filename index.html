@@ -1,30 +1,23 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <!-- Основные настройки страницы -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🎬 Кинотеатр</title>
-    
-    <!-- Подключение стилей и Telegram Web App -->
     <link rel="stylesheet" href="style.css">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
-    <!-- Основной контейнер приложения -->
     <div class="container">
-        <!-- Шапка с заголовком -->
         <header class="header">
-            <h1>🎬 Кинотеатр</h1>
-            <p>Смотрите фильмы в отличном качестве</p>
+            <h1>Кинотеатр 🍿</h1>
+            <p>Смотрите фильмы в отличном качестве прямо в Telegram</p>
         </header>
         
-        <!-- Поисковая строка -->
         <div class="search-box">
-            <input type="text" class="search-input" id="searchInput" placeholder="🔍 Поиск фильмов...">
+            <input type="text" class="search-input" id="searchInput" placeholder="Поиск фильмов...">
         </div>
         
-        <!-- Категории фильмов -->
         <div class="categories">
             <button class="category-btn active" data-category="all">Все</button>
             <button class="category-btn" data-category="films">Фильмы</button>
@@ -32,19 +25,15 @@
             <button class="category-btn" data-category="cartoons">Мультфильмы</button>
         </div>
         
-        <!-- Контейнер для списка фильмов -->
         <div id="moviesList" class="movies-grid"></div>
-        
-        <!-- Индикатор загрузки -->
         <div id="loading" class="loading">Загрузка...</div>
     </div>
     
-    <!-- Видеоплеер (скрыт по умолчанию) -->
+    <!-- Video Player -->
     <div class="player-container" id="playerContainer">
-        <!-- Кнопка возврата из плеера -->
         <button class="back-btn" onclick="closePlayer()">← Назад</button>
         
-        <!-- Контроль громкости -->
+        <!-- Volume Control -->
         <div class="volume-control">
             <div class="volume-icon">🔊</div>
             <div class="slider-container" id="volumeSlider">
@@ -57,11 +46,10 @@
             </div>
         </div>
         
-        <!-- Контейнер для RuTube плеера -->
         <div id="rutubePlayer" class="rutube-player"></div>
     </div>
 
-    <!-- SVG фильтр для эффекта жидкости на слайдере -->
+    <!-- SVG Filter for Liquid Effect -->
     <svg width="0" height="0">
         <filter id="mini-liquid-lens" x="-50%" y="-50%" width="200%" height="200%">
             <feImage x="0" y="0" result="normalMap" xlink:href="data:image/svg+xml;utf8,
@@ -80,7 +68,6 @@
         </filter>
     </svg>
 
-    <!-- Подключение основного JavaScript файла -->
     <script src="app.js"></script>
 </body>
 </html>
