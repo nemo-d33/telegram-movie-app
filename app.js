@@ -18,9 +18,101 @@ function initApp() {
         setupEventListeners();
         initVolumeSlider();
         console.log('App initialized successfully');
-    }, 500);
+    }, 100);
 }
 
+function initVolumeSlider() {
+    const slider = document.getElementById('volumeSlider');
+    const progress = document.getElementById('volumeProgress');
+    const thumb = document.getElementById('volumeThumb');
+
+    let isDragging = false;
+    let sliderRect = slider.getBoundingClientRect();
+
+    const updateThumbAndProgress = (percent) => {
+        percent = Math.max(0, Math.min(100, percent));
+        const px = (percent / 100) * sliderRect.width;
+        progress.style.width = `${percent}%`;
+        thumb.style.left = `${px}px`;
+        
+        // Update volume in video iframe
+        updateVideoVolume(percent / 100);
+    }
+
+    const getPercentFromClientX = (clientX) => {
+        const offsetX = clientX - sliderRect.left;
+        return (offsetX / sliderRect.width) * 100;
+    }
+
+    const onMove = (clientX) => {
+        const percent = getPercentFromClientX(clientX);
+        updateThumbAndProgress(percent);
+    }
+
+    const onMouseDown = (e) => {
+        isDragging = true;
+        sliderRect = slider.getBoundingClientRect();
+        onMove(e.clientX);
+        thumb.classList.add('active');
+        e.preventDefault();
+    }
+
+    const onTouchStart = (e) => {
+        isDragging = true;
+        sliderRect = slider.getBoundingClientRect();
+        onMove(e.touches[0].clientX);
+        thumb.classList.add('active');
+        e.preventDefault();
+    }
+
+    const onMouseMove = (e) => {
+        if (isDragging) onMove(e.clientX);
+    }
+
+    const onTouchMove = (e) => {
+        if (isDragging) onMove(e.touches[0].clientX);
+        e.preventDefault();
+    }
+
+    const stopDrag = () => {
+        isDragging = false;
+        thumb.classList.remove('active');
+    }
+
+    // Events
+    thumb.addEventListener('mousedown', onMouseDown);
+    thumb.addEventListener('touchstart', onTouchStart, { passive: false });
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', stopDrag);
+    document.addEventListener('touchmove', onTouchMove, { passive: false });
+    document.addEventListener('touchend', stopDrag);
+
+    slider.addEventListener('mousedown', (e) => {
+        sliderRect = slider.getBoundingClientRect();
+        onMove(e.clientX);
+    });
+
+    slider.addEventListener('touchstart', (e) => {
+        sliderRect = slider.getBoundingClientRect();
+        onMove(e.touches[0].clientX);
+        e.preventDefault();
+    }, { passive: false });
+
+    // Initialize with 70% volume
+    updateThumbAndProgress(70);
+}
+
+function updateVideoVolume(volume) {
+    const iframe = document.querySelector('.rutube-iframe');
+    if (iframe && iframe.contentWindow) {
+        // Note: RuTube iframe may not support external volume control
+        // This is primarily a UI demonstration
+        console.log('Setting volume to:', volume);
+    }
+}
+
+// Остальные функции остаются без изменений...
 function loadMovies() {
     movies = [
         {
@@ -42,27 +134,8 @@ function loadMovies() {
             rutubePageUrl: "https://rutube.ru/video/1234567891/",
             category: "films",
             description: "Оставшиеся в живых члены команды Мстителей пытаются исправить последствия действий Таноса."
-        },
-        {
-            id: 3,
-            title: "Игра в кальмара",
-            year: "2021",
-            poster: "https://images.unsplash.com/photo-1560169897-fc0cdbdfa4d5?w=300&h=400&fit=crop",
-            rutubeEmbedUrl: "https://rutube.ru/play/embed/1234567892",
-            rutubePageUrl: "https://rutube.ru/video/1234567892/",
-            category: "series",
-            description: "Сотни игроков-банкротов принимают приглашение сыграть в детские игры на выживание."
-        },
-        {
-            id: 4,
-            title: "Холодное сердце",
-            year: "2013",
-            poster: "https://images.unsplash.com/photo-1618336756473-37d8fcf7d7be?w=300&h=400&fit=crop",
-            rutubeEmbedUrl: "https://rutube.ru/play/embed/1234567893",
-            rutubePageUrl: "https://rutube.ru/video/1234567893/",
-            category: "cartoons",
-            description: "Бесстрашная Анна отправляется в горы, чтобы найти свою сестру Эльзу."
         }
+        // ... остальные фильмы
     ];
     
     filteredMovies = [...movies];
@@ -73,8 +146,9 @@ function renderMovies(moviesArray) {
     
     if (moviesArray.length === 0) {
         moviesList.innerHTML = `
-            <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #888;">
-                📽️ Фильмы не найдены
+            <div class="empty-state">
+                <h3>🎬 Фильмы не найдены</h3>
+                <p>Попробуйте изменить поисковый запрос или выбрать другую категорию</p>
             </div>
         `;
         return;
@@ -97,24 +171,22 @@ function openMovie(movieId) {
     if (!movie) return;
     
     tg.showPopup({
-        title: `🎬 ${movie.title} (${movie.year})`,
+        title: `${movie.title} (${movie.year})`,
         message: movie.description,
         buttons: [
-            {id: 'watch', type: 'default', text: '🎥 Смотреть фильм'},
+            {id: 'watch', type: 'default', text: '🎥 Смотреть'},
             {id: 'cancel', type: 'cancel'}
         ]
     }, function(buttonId) {
         if (buttonId === 'watch') {
-            playRuTubeVideo(movie.rutubeEmbedUrl, movie.rutubePageUrl, movie.title);
+            playRuTubeVideo(movie.rutubeEmbedUrl, movie.rutubePageUrl);
         }
     });
 }
 
-function playRuTubeVideo(embedUrl, pageUrl, title) {
+function playRuTubeVideo(embedUrl, pageUrl) {
     const playerContainer = document.getElementById('playerContainer');
     const videoPlayerContainer = document.getElementById('rutubePlayer');
-    
-    console.log('Opening RuTube video:', embedUrl);
     
     videoPlayerContainer.innerHTML = `
         <iframe 
@@ -126,7 +198,7 @@ function playRuTubeVideo(embedUrl, pageUrl, title) {
         ></iframe>
     `;
     
-    playerContainer.style.display = 'block';
+    playerContainer.style.display = 'flex';
     document.body.style.overflow = 'hidden';
 }
 
@@ -137,49 +209,6 @@ function closePlayer() {
     videoPlayerContainer.innerHTML = '';
     playerContainer.style.display = 'none';
     document.body.style.overflow = 'auto';
-}
-
-function initVolumeSlider() {
-    const slider = document.getElementById('volumeSlider');
-    const progress = document.getElementById('volumeProgress');
-    const thumb = document.getElementById('volumeThumb');
-
-    let isDragging = false;
-
-    const updateThumbAndProgress = (percent) => {
-        percent = Math.max(0, Math.min(100, percent));
-        progress.style.width = `${percent}%`;
-        thumb.style.left = `${percent}%`;
-    }
-
-    const onMove = (clientX) => {
-        const rect = slider.getBoundingClientRect();
-        const percent = ((clientX - rect.left) / rect.width) * 100;
-        updateThumbAndProgress(percent);
-    }
-
-    thumb.addEventListener('mousedown', (e) => {
-        isDragging = true;
-        document.addEventListener('mousemove', onMouseMove);
-        document.addEventListener('mouseup', stopDrag);
-        e.preventDefault();
-    });
-
-    function onMouseMove(e) {
-        if (isDragging) onMove(e.clientX);
-    }
-
-    function stopDrag() {
-        isDragging = false;
-        document.removeEventListener('mousemove', onMouseMove);
-        document.removeEventListener('mouseup', stopDrag);
-    }
-
-    slider.addEventListener('click', (e) => {
-        onMove(e.clientX);
-    });
-
-    updateThumbAndProgress(70);
 }
 
 function setupEventListeners() {
