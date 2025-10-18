@@ -18,16 +18,6 @@ body {
     margin: 0 auto;
 }
 
-/* Liquid Glass Effect Base Class */
-.glass-effect {
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-radius: 15px;
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-}
-
 /* Header */
 .header {
     text-align: center;
@@ -204,11 +194,13 @@ body {
     background: linear-gradient(135deg, #0a1525 0%, #1a2b45 100%);
     z-index: 1000;
     display: none;
+    flex-direction: column;
 }
 
 .rutube-player {
     width: 100%;
     height: 100%;
+    flex: 1;
 }
 
 .rutube-iframe {
@@ -240,6 +232,112 @@ body {
     background: rgba(255, 255, 255, 0.25);
     border: 1px solid rgba(255, 255, 255, 0.25);
     transform: translateY(-2px);
+}
+
+/* Volume Control */
+.volume-control {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 1001;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    padding: 10px 16px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.3);
+}
+
+.volume-icon {
+    font-size: 18px;
+    color: white;
+}
+
+/* iOS Slider Styles */
+.slider-container {
+    position: relative;
+    width: 120px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 999px;
+    cursor: pointer;
+}
+
+.slider-progress {
+    position: absolute;
+    height: 100%;
+    background: linear-gradient(117deg, #49a3fc 0%, #3681ee 100%);
+    border-radius: 999px;
+    width: 70%;
+    z-index: 1;
+}
+
+.slider-thumb-glass {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 2;
+    background-color: #fff;
+    box-shadow: 0 1px 8px 0 rgba(0, 30, 63, 0.1), 0 0 2px 0 rgba(0, 9, 20, 0.1);
+    overflow: hidden;
+    transition: transform 0.15s ease;
+}
+
+.slider-thumb-glass-filter {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    backdrop-filter: blur(0.6px);
+    -webkit-backdrop-filter: blur(0.6px);
+    filter: url(#mini-liquid-lens);
+}
+
+.slider-thumb-glass-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.slider-thumb-glass-specular {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    border-radius: inherit;
+    box-shadow:
+        inset 1px 1px 0 rgba(69, 168, 243, 0.2),
+        inset 1px 3px 0 rgba(28, 63, 90, 0.05),
+        inset 0 0 22px rgb(255 255 255 / 60%),
+        inset -1px -1px 0 rgba(69, 168, 243, 0.12);
+}
+
+.slider-thumb-glass-filter,
+.slider-thumb-glass-overlay,
+.slider-thumb-glass-specular {
+    opacity: 0;
+}
+
+.slider-thumb-glass.active {
+    background-color: transparent;
+    box-shadow: none;
+}
+
+.slider-thumb-glass.active .slider-thumb-glass-filter,
+.slider-thumb-glass.active .slider-thumb-glass-overlay,
+.slider-thumb-glass.active .slider-thumb-glass-specular {
+    opacity: 1;
+}
+
+.slider-thumb-glass:active {
+    transform: translate(-50%, -50%) scale(1.2);
 }
 
 /* Empty State */
@@ -302,6 +400,16 @@ body {
         padding: 10px 16px;
         font-size: 13px;
     }
+    
+    .volume-control {
+        top: 15px;
+        right: 15px;
+        padding: 8px 12px;
+    }
+    
+    .slider-container {
+        width: 80px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -324,5 +432,14 @@ body {
         left: 15px;
         padding: 10px 15px;
         font-size: 14px;
+    }
+    
+    .volume-control {
+        top: 12px;
+        right: 12px;
+    }
+    
+    .slider-container {
+        width: 70px;
     }
 }
