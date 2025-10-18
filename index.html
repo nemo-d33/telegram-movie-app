@@ -4,8 +4,557 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🎬 Кинотеатр</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f1a2b 0%, #1a2b45 50%, #0f1a2b 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.4;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 30px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            animation: slideInDown 0.8s ease;
+        }
+
+        @keyframes slideInDown {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .header h1 {
+            font-size: 2.2em;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: white;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1em;
+            font-weight: 400;
+        }
+
+        /* Search */
+        .search-box {
+            margin: 20px 0;
+            text-align: center;
+            animation: fadeIn 0.8s ease 0.2s both;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .search-input {
+            width: 90%;
+            max-width: 400px;
+            padding: 14px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 15px;
+            color: white;
+            font-size: 16px;
+            outline: none;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            transition: all 0.3s ease;
+        }
+
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .search-input:focus {
+            background: rgba(255, 255, 255, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.5);
+            transform: scale(1.02);
+        }
+
+        /* Categories */
+        .categories {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            animation: fadeIn 0.8s ease 0.4s both;
+        }
+
+        .category-btn {
+            padding: 12px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 12px;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+
+        .category-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.5);
+        }
+
+        .category-btn.active {
+            background: rgba(74, 144, 226, 0.4);
+            border: 1px solid rgba(74, 144, 226, 0.6);
+            box-shadow: 0 8px 32px 0 rgba(74, 144, 226, 0.4);
+        }
+
+        /* Movie Cards */
+        .movies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 16px;
+            margin-bottom: 40px;
+            animation: fadeIn 0.8s ease 0.6s both;
+        }
+
+        .movie-card {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            animation: cardAppear 0.5s ease both;
+        }
+
+        @keyframes cardAppear {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .movie-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            background: rgba(255, 255, 255, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.5);
+        }
+
+        .movie-poster {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            background: linear-gradient(135deg, #1a2b45 0%, #2d4a7a 100%);
+            transition: transform 0.3s ease;
+        }
+
+        .movie-card:hover .movie-poster {
+            transform: scale(1.05);
+        }
+
+        .movie-info {
+            padding: 14px;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        .movie-title {
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-bottom: 6px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            color: white;
+        }
+
+        .movie-year {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.85em;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 1.1em;
+            color: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            display: none;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Video Player */
+        .player-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0a1525 0%, #1a2b45 100%);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            animation: playerSlideIn 0.4s ease;
+        }
+
+        @keyframes playerSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .player-container.closing {
+            animation: playerSlideOut 0.3s ease forwards;
+        }
+
+        @keyframes playerSlideOut {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(100px);
+            }
+        }
+
+        .rutube-player {
+            width: 100%;
+            height: 100%;
+            flex: 1;
+        }
+
+        .rutube-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            padding: 12px 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+        }
+
+        /* Volume Control */
+        .volume-control {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            padding: 10px 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.3);
+            opacity: 0;
+            transform: translateY(-10px);
+            animation: volumeFadeIn 0.5s ease 0.3s forwards;
+        }
+
+        @keyframes volumeFadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .volume-icon {
+            font-size: 18px;
+            color: white;
+        }
+
+        /* iOS Slider Styles */
+        .slider-container {
+            position: relative;
+            width: 120px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 999px;
+            cursor: pointer;
+        }
+
+        .slider-progress {
+            position: absolute;
+            height: 100%;
+            background: linear-gradient(117deg, #49a3fc 0%, #3681ee 100%);
+            border-radius: 999px;
+            width: 70%;
+            z-index: 1;
+            transition: width 0.1s ease;
+        }
+
+        .slider-thumb-glass {
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 2;
+            background-color: #fff;
+            box-shadow: 0 1px 8px 0 rgba(0, 30, 63, 0.1), 0 0 2px 0 rgba(0, 9, 20, 0.1);
+            overflow: hidden;
+            transition: transform 0.15s ease;
+        }
+
+        .slider-thumb-glass-filter {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            backdrop-filter: blur(0.6px);
+            -webkit-backdrop-filter: blur(0.6px);
+            filter: url(#mini-liquid-lens);
+        }
+
+        .slider-thumb-glass-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .slider-thumb-glass-specular {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            border-radius: inherit;
+            box-shadow:
+                inset 1px 1px 0 rgba(69, 168, 243, 0.2),
+                inset 1px 3px 0 rgba(28, 63, 90, 0.05),
+                inset 0 0 22px rgb(255 255 255 / 60%),
+                inset -1px -1px 0 rgba(69, 168, 243, 0.12);
+        }
+
+        .slider-thumb-glass-filter,
+        .slider-thumb-glass-overlay,
+        .slider-thumb-glass-specular {
+            opacity: 0;
+        }
+
+        .slider-thumb-glass.active {
+            background-color: transparent;
+            box-shadow: none;
+        }
+
+        .slider-thumb-glass.active .slider-thumb-glass-filter,
+        .slider-thumb-glass.active .slider-thumb-glass-overlay,
+        .slider-thumb-glass.active .slider-thumb-glass-specular {
+            opacity: 1;
+        }
+
+        .slider-thumb-glass:active {
+            transform: translate(-50%, -50%) scale(1.2);
+        }
+
+        /* Empty State */
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 50px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            animation: fadeIn 0.5s ease;
+        }
+
+        .empty-state h3 {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            color: white;
+        }
+
+        .empty-state p {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Mobile Optimization */
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            
+            .movies-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 12px;
+            }
+            
+            .movie-poster {
+                height: 190px;
+            }
+            
+            .header {
+                padding: 25px 15px;
+                margin-bottom: 20px;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .search-input {
+                padding: 12px 18px;
+                font-size: 15px;
+            }
+            
+            .categories {
+                gap: 8px;
+            }
+            
+            .category-btn {
+                padding: 10px 16px;
+                font-size: 13px;
+            }
+            
+            .volume-control {
+                top: 15px;
+                right: 15px;
+                padding: 8px 12px;
+            }
+            
+            .slider-container {
+                width: 80px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .movies-grid {
+                grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+                gap: 10px;
+            }
+            
+            .movie-poster {
+                height: 180px;
+            }
+            
+            .category-btn {
+                padding: 10px 14px;
+                font-size: 12px;
+            }
+            
+            .back-btn {
+                top: 15px;
+                left: 15px;
+                padding: 10px 15px;
+                font-size: 14px;
+            }
+            
+            .volume-control {
+                top: 12px;
+                right: 12px;
+            }
+            
+            .slider-container {
+                width: 70px;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -26,7 +575,10 @@
         </div>
         
         <div id="moviesList" class="movies-grid"></div>
-        <div id="loading" class="loading">Загрузка...</div>
+        <div id="loading" class="loading">
+            <div class="loading-spinner"></div>
+            Загрузка фильмов...
+        </div>
     </div>
     
     <!-- Video Player -->
@@ -68,6 +620,346 @@
         </filter>
     </svg>
 
-    <script src="app.js"></script>
+    <script>
+        const tg = window.Telegram.WebApp;
+
+        let movies = [];
+        let filteredMovies = [];
+        let currentCategory = 'all';
+        let isClosingPlayer = false;
+
+        function initApp() {
+            console.log('Initializing app...');
+            
+            if (tg && tg.ready) {
+                tg.ready();
+                tg.expand();
+            }
+            
+            showLoading();
+            
+            // Имитация загрузки данных
+            setTimeout(() => {
+                loadMovies();
+                hideLoading();
+                renderMovies(movies);
+                setupEventListeners();
+                initVolumeSlider();
+                console.log('App initialized successfully');
+            }, 800);
+        }
+
+        function initVolumeSlider() {
+            const slider = document.getElementById('volumeSlider');
+            const progress = document.getElementById('volumeProgress');
+            const thumb = document.getElementById('volumeThumb');
+
+            let isDragging = false;
+            let sliderRect = slider.getBoundingClientRect();
+
+            const updateThumbAndProgress = (percent) => {
+                percent = Math.max(0, Math.min(100, percent));
+                const px = (percent / 100) * sliderRect.width;
+                progress.style.width = `${percent}%`;
+                thumb.style.left = `${px}px`;
+                
+                updateVideoVolume(percent / 100);
+            }
+
+            const getPercentFromClientX = (clientX) => {
+                const offsetX = clientX - sliderRect.left;
+                return (offsetX / sliderRect.width) * 100;
+            }
+
+            const onMove = (clientX) => {
+                const percent = getPercentFromClientX(clientX);
+                updateThumbAndProgress(percent);
+            }
+
+            const onMouseDown = (e) => {
+                isDragging = true;
+                sliderRect = slider.getBoundingClientRect();
+                onMove(e.clientX);
+                thumb.classList.add('active');
+                e.preventDefault();
+            }
+
+            const onTouchStart = (e) => {
+                isDragging = true;
+                sliderRect = slider.getBoundingClientRect();
+                onMove(e.touches[0].clientX);
+                thumb.classList.add('active');
+                e.preventDefault();
+            }
+
+            const onMouseMove = (e) => {
+                if (isDragging) onMove(e.clientX);
+            }
+
+            const onTouchMove = (e) => {
+                if (isDragging) onMove(e.touches[0].clientX);
+                e.preventDefault();
+            }
+
+            const stopDrag = () => {
+                isDragging = false;
+                thumb.classList.remove('active');
+            }
+
+            // Events
+            thumb.addEventListener('mousedown', onMouseDown);
+            thumb.addEventListener('touchstart', onTouchStart, { passive: false });
+
+            document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('mouseup', stopDrag);
+            document.addEventListener('touchmove', onTouchMove, { passive: false });
+            document.addEventListener('touchend', stopDrag);
+
+            slider.addEventListener('mousedown', (e) => {
+                sliderRect = slider.getBoundingClientRect();
+                onMove(e.clientX);
+            });
+
+            slider.addEventListener('touchstart', (e) => {
+                sliderRect = slider.getBoundingClientRect();
+                onMove(e.touches[0].clientX);
+                e.preventDefault();
+            }, { passive: false });
+
+            // Initialize with 70% volume
+            updateThumbAndProgress(70);
+        }
+
+        function updateVideoVolume(volume) {
+            const iframe = document.querySelector('.rutube-iframe');
+            if (iframe && iframe.contentWindow) {
+                console.log('Setting volume to:', volume);
+            }
+        }
+
+        function loadMovies() {
+            movies = [
+                {
+                    id: 1,
+                    title: "Форсаж 9",
+                    year: "2021",
+                    poster: "https://images.unsplash.com/photo-1594909122845-11baa439b7bf?w=300&h=400&fit=crop",
+                    rutubeEmbedUrl: "https://rutube.ru/play/embed/bb0c848e121e79263789b3b19460bff0/",
+                    rutubePageUrl: "https://rutube.ru/video/bb0c848e121e79263789b3b19460bff0/",
+                    category: "films",
+                    description: "Доминик Торетто ведет спокойную жизнь с Летти и своим сыном."
+                },
+                {
+                    id: 2,
+                    title: "Мстители: Финал",
+                    year: "2019",
+                    poster: "https://images.unsplash.com/photo-1635805737707-575885ab0820?w=300&h=400&fit=crop",
+                    rutubeEmbedUrl: "https://rutube.ru/play/embed/10675995/",
+                    rutubePageUrl: "https://rutube.ru/video/10675995/",
+                    category: "films",
+                    description: "Оставшиеся в живых члены команды Мстителей пытаются исправить последствия действий Таноса."
+                },
+                {
+                    id: 3,
+                    title: "Человек-паук: Нет пути домой",
+                    year: "2021",
+                    poster: "https://images.unsplash.com/photo-1635805737707-575885ab0820?w=300&h=400&fit=crop",
+                    rutubeEmbedUrl: "https://rutube.ru/play/embed/10675995/",
+                    rutubePageUrl: "https://rutube.ru/video/10675995/",
+                    category: "films",
+                    description: "Питер Паркер обращается за помощью к Доктору Стрэнджу."
+                },
+                {
+                    id: 4,
+                    title: "Игра престолов",
+                    year: "2011-2019",
+                    poster: "https://images.unsplash.com/photo-1594909122845-11baa439b7bf?w=300&h=400&fit=crop",
+                    rutubeEmbedUrl: "https://rutube.ru/play/embed/10675995/",
+                    rutubePageUrl: "https://rutube.ru/video/10675995/",
+                    category: "series",
+                    description: "Борьба за Железный трон в вымышленном мире Вестероса."
+                },
+                {
+                    id: 5,
+                    title: "Холодное сердце",
+                    year: "2013",
+                    poster: "https://images.unsplash.com/photo-1635805737707-575885ab0820?w=300&h=400&fit=crop",
+                    rutubeEmbedUrl: "https://rutube.ru/play/embed/10675995/",
+                    rutubePageUrl: "https://rutube.ru/video/10675995/",
+                    category: "cartoons",
+                    description: "Принцесса Эльза обладает магической силой создавать лед и снег."
+                },
+                {
+                    id: 6,
+                    title: "Король Лев",
+                    year: "1994",
+                    poster: "https://images.unsplash.com/photo-1594909122845-11baa439b7bf?w=300&h=400&fit=crop",
+                    rutubeEmbedUrl: "https://rutube.ru/play/embed/10675995/",
+                    rutubePageUrl: "https://rutube.ru/video/10675995/",
+                    category: "cartoons",
+                    description: "Молодой львенок Симба познает истинный смысл ответственности."
+                }
+            ];
+            
+            filteredMovies = [...movies];
+        }
+
+        function renderMovies(moviesArray) {
+            const moviesList = document.getElementById('moviesList');
+            
+            if (moviesArray.length === 0) {
+                moviesList.innerHTML = `
+                    <div class="empty-state">
+                        <h3>🎬 Фильмы не найдены</h3>
+                        <p>Попробуйте изменить поисковый запрос или выбрать другую категорию</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            moviesList.innerHTML = moviesArray.map((movie, index) => `
+                <div class="movie-card" onclick="openMovie(${movie.id})" 
+                     style="animation-delay: ${index * 0.1}s">
+                    <img src="${movie.poster}" alt="${movie.title}" class="movie-poster"
+                         onerror="this.src='https://images.unsplash.com/photo-1485846234645-a62644f84728?w=300&h=400&fit=crop'">
+                    <div class="movie-info">
+                        <div class="movie-title">${movie.title}</div>
+                        <div class="movie-year">${movie.year}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openMovie(movieId) {
+            const movie = movies.find(m => m.id === movieId);
+            if (!movie) return;
+            
+            if (tg && tg.showPopup) {
+                tg.showPopup({
+                    title: `${movie.title} (${movie.year})`,
+                    message: movie.description,
+                    buttons: [
+                        {id: 'watch', type: 'default', text: '🎥 Смотреть'},
+                        {id: 'cancel', type: 'cancel'}
+                    ]
+                }, function(buttonId) {
+                    if (buttonId === 'watch') {
+                        playRuTubeVideo(movie.rutubeEmbedUrl, movie.rutubePageUrl);
+                    }
+                });
+            } else {
+                // Fallback для браузера
+                playRuTubeVideo(movie.rutubeEmbedUrl, movie.rutubePageUrl);
+            }
+        }
+
+        function playRuTubeVideo(embedUrl, pageUrl) {
+            const playerContainer = document.getElementById('playerContainer');
+            const videoPlayerContainer = document.getElementById('rutubePlayer');
+            
+            isClosingPlayer = false;
+            playerContainer.classList.remove('closing');
+            
+            videoPlayerContainer.innerHTML = `
+                <iframe 
+                    class="rutube-iframe"
+                    src="${embedUrl}" 
+                    frameborder="0" 
+                    allow="autoplay; encrypted-media; fullscreen"
+                    allowfullscreen
+                    loading="lazy"
+                ></iframe>
+            `;
+            
+            playerContainer.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePlayer() {
+            if (isClosingPlayer) return;
+            
+            const playerContainer = document.getElementById('playerContainer');
+            const videoPlayerContainer = document.getElementById('rutubePlayer');
+            
+            isClosingPlayer = true;
+            playerContainer.classList.add('closing');
+            
+            setTimeout(() => {
+                videoPlayerContainer.innerHTML = '';
+                playerContainer.style.display = 'none';
+                playerContainer.classList.remove('closing');
+                document.body.style.overflow = 'auto';
+                isClosingPlayer = false;
+            }, 300);
+        }
+
+        function setupEventListeners() {
+            const searchInput = document.getElementById('searchInput');
+            
+            // Debounce поиска
+            let searchTimeout;
+            searchInput.addEventListener('input', function(e) {
+                clearTimeout(searchTimeout);
+                const searchTerm = e.target.value.toLowerCase().trim();
+                searchTimeout = setTimeout(() => {
+                    filterMovies(searchTerm, currentCategory);
+                }, 300);
+            });
+            
+            const categoryBtns = document.querySelectorAll('.category-btn');
+            categoryBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    categoryBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const category = this.dataset.category;
+                    currentCategory = category;
+                    filterMovies(searchInput.value.toLowerCase().trim(), category);
+                });
+            });
+            
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closePlayer();
+                }
+            });
+            
+            // Закрытие плеера по клику на затемненную область
+            document.getElementById('playerContainer').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closePlayer();
+                }
+            });
+        }
+
+        function filterMovies(searchTerm, category) {
+            let results = [...movies];
+            
+            if (category !== 'all') {
+                results = results.filter(movie => movie.category === category);
+            }
+            
+            if (searchTerm) {
+                results = results.filter(movie => 
+                    movie.title.toLowerCase().includes(searchTerm) ||
+                    movie.description.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            filteredMovies = results;
+            renderMovies(filteredMovies);
+        }
+
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('moviesList').innerHTML = '';
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
 </body>
 </html>
